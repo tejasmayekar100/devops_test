@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Expense Claims{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+    <h3>Expense Claims</h3>
+    <a href="/expense-claims/add" class="btn btn-primary btn-sm">+ New Claim</a>
+</div>
+
+{# expense_claims may be a Pagination object (manager/finance/admin) or a plain list (employee's own claims) #}
+{% set claims_list = expense_claims.items if expense_claims.items is defined else expense_claims %}
+
+<table class="table table-striped mt-3">
+    <thead><tr><th>ID</th><th>Travel Request</th><th>Total Amount</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for claim in claims_list %}
+        <tr>
+            <td>{{ claim.id }}</td>
+            <td>{{ claim.travel_request_id }}</td>
+            <td>{{ claim.total_amount }}</td>
+            <td>
+                {% if claim.status == "APPROVED" %}
+                    <span class="badge bg-success">{{ claim.status }}</span>
+                {% elif claim.status == "REJECTED" %}
+                    <span class="badge bg-danger">{{ claim.status }}</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">{{ claim.status }}</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/expense-claims/{{ claim.id }}/approvals" class="btn btn-sm btn-outline-secondary">History</a>
+                <a href="/reimbursements/{{ claim.id }}/my-status" class="btn btn-sm btn-outline-info">Reimbursement</a>
+                {% if current_user and current_user.role == "FINANCE_ADMIN" and claim.status == "APPROVED" %}
+                <form method="POST" action="/expense-claims/{{ claim.id }}/reimbursement" style="display:inline">
+                <button class="btn btn-sm btn-primary" type="submit">Create Reimbursement</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="5" class="text-muted">No expense claims found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

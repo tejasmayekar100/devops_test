@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}My Reimbursement Status{% endblock %}
+{% block content %}
+<h3>Reimbursement Status for Claim #{{ claim.id }}</h3>
+<table class="table table-bordered" style="max-width: 500px;">
+    <tr><th>Claim Total</th><td>{{ claim.total_amount }}</td></tr>
+    <tr><th>Claim Status</th><td>{{ claim.status }}</td></tr>
+    <tr><th>Reimbursement Amount</th><td>{{ reimbursement.approved_amount }}</td></tr>
+    <tr>
+        <th>Reimbursement Status</th>
+        <td>
+            {% if reimbursement.status == "PAID" %}
+                <span class="badge bg-success">{{ reimbursement.status }}</span>
+            {% else %}
+                <span class="badge bg-warning text-dark">{{ reimbursement.status }}</span>
+            {% endif %}
+        </td>
+    </tr>
+    <tr><th>Processed Date</th><td>{{ reimbursement.processed_date or "Not yet processed" }}</td></tr>
+</table>
+<a href="/expense-claims" class="btn btn-secondary">Back to My Claims</a>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Approval History{% endblock %}
+{% block content %}
+<h3>Approval History</h3>
+<table class="table table-striped mt-3">
+    <thead><tr><th>ID</th><th>Claim ID</th><th>Action</th><th>Comment</th><th>By User</th><th>Date</th></tr></thead>
+    <tbody>
+    {% for approval in approvals.items %}
+        <tr>
+            <td>{{ approval.id }}</td>
+            <td>{{ approval.claim_id }}</td>
+            <td>
+                {% if approval.action == "APPROVED" %}
+                    <span class="badge bg-success">{{ approval.action }}</span>
+                {% else %}
+                    <span class="badge bg-danger">{{ approval.action }}</span>
+                {% endif %}
+            </td>
+            <td>{{ approval.comment or "-" }}</td>
+            <td>{{ approval.user_id }}</td>
+            <td>{{ approval.created_at }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="6" class="text-muted">No approval history found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+<p class="text-muted">Page {{ approvals.page }} of {{ approvals.pages }}</p>
+{% endblock %}

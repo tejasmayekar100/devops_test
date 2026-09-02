@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Claim Approval History{% endblock %}
+{% block content %}
+<h3>Approval History for Claim #{{ claim_id }}</h3>
+
+<table class="table table-striped mt-3">
+    <thead><tr><th>Action</th><th>Comment</th><th>By User</th><th>Date</th></tr></thead>
+    <tbody>
+    {% for approval in approvals %}
+        <tr>
+            <td>
+                {% if approval.action == "APPROVED" %}
+                    <span class="badge bg-success">{{ approval.action }}</span>
+                {% else %}
+                    <span class="badge bg-danger">{{ approval.action }}</span>
+                {% endif %}
+            </td>
+            <td>{{ approval.comment or "-" }}</td>
+            <td>{{ approval.user_id }}</td>
+            <td>{{ approval.created_at }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="4" class="text-muted">No approval actions yet for this claim.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if current_user and current_user.role == "MANAGER" %}
+<hr>
+<h5>Take Action</h5>
+<form method="POST" action="/expense-claims/{{ claim_id }}/approve" class="mb-2">
+    <div class="input-group" style="max-width: 500px;">
+        <input type="text" name="comment" class="form-control" placeholder="Optional comment">
+        <button type="submit" class="btn btn-success">Approve</button>
+    </div>
+</form>
+<form method="POST" action="/expense-claims/{{ claim_id }}/reject">
+    <div class="input-group" style="max-width: 500px;">
+        <input type="text" name="comment" class="form-control" placeholder="Optional comment">
+        <button type="submit" class="btn btn-danger">Reject</button>
+    </div>
+</form>
+{% endif %}
+
+<a href="/expense-claims" class="btn btn-secondary mt-3">Back to Claims</a>
+{% endblock %}

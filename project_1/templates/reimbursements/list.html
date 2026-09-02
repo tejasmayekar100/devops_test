@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Reimbursements{% endblock %}
+{% block content %}
+<h3>Reimbursements</h3>
+<table class="table table-striped mt-3">
+    <thead><tr><th>ID</th><th>Claim ID</th><th>Approved Amount</th><th>Status</th><th>Processed Date</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for reimbursement in reimbursements.items %}
+        <tr>
+            <td>{{ reimbursement.id }}</td>
+            <td>{{ reimbursement.claim_id }}</td>
+            <td>{{ reimbursement.approved_amount }}</td>
+            <td>
+                {% if reimbursement.status == "PAID" %}
+                    <span class="badge bg-success">{{ reimbursement.status }}</span>
+                {% elif reimbursement.status == "FAILED" %}
+                    <span class="badge bg-danger">{{ reimbursement.status }}</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">{{ reimbursement.status }}</span>
+                {% endif %}
+            </td>
+            <td>{{ reimbursement.processed_date or "-" }}</td>
+            <td>
+                <a href="/reimbursements/{{ reimbursement.id }}" class="btn btn-sm btn-outline-secondary">View</a>
+                <form method="POST" action="/reimbursements/{{ reimbursement.id }}/delete" style="display:inline"
+                      onsubmit="return confirm('Delete this reimbursement?');">
+                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="6" class="text-muted">No reimbursements found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+<p class="text-muted">Page {{ reimbursements.page }} of {{ reimbursements.pages }}</p>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Expense Policies{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+    <h3>Expense Policies</h3>
+    <a href="/expense-policies/add" class="btn btn-primary btn-sm">+ New Policy</a>
+</div>
+<table class="table table-striped mt-3">
+    <thead><tr><th>ID</th><th>Category ID</th><th>Maximum Amount</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for policy in expense_policies.items %}
+        <tr>
+            <td>{{ policy.id }}</td>
+            <td>{{ policy.category_id }}</td>
+            <td>{{ policy.maximum_amount }}</td>
+            <td>
+                <form method="POST" action="/expense-policies/delete/{{ policy.id }}" style="display:inline"
+                      onsubmit="return confirm('Delete this policy?');">
+                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="4" class="text-muted">No policies found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+<p class="text-muted">Page {{ expense_policies.page }} of {{ expense_policies.pages }}</p>
+{% endblock %}

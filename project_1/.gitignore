@@ -1,0 +1,36 @@
+# Virtual environment
+project_1_venv/
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Environment/config secrets
+.env
+.env.*
+!.env.example
+
+# Uploaded files
+uploads/
+
+# Test/coverage files
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python packaging
+*.egg-info/
+dist/
+build/

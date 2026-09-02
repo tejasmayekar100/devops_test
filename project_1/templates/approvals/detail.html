@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Approval Record{% endblock %}
+{% block content %}
+<h3>Approval Record #{{ approval.id }}</h3>
+<table class="table table-bordered" style="max-width: 500px;">
+    <tr><th>Claim ID</th><td>{{ approval.claim_id }}</td></tr>
+    <tr><th>Action</th><td>{{ approval.action }}</td></tr>
+    <tr><th>Comment</th><td>{{ approval.comment or "-" }}</td></tr>
+    <tr><th>By User</th><td>{{ approval.user_id }}</td></tr>
+    <tr><th>Date</th><td>{{ approval.created_at }}</td></tr>
+</table>
+<a href="/approvals" class="btn btn-secondary">Back</a>
+{% endblock %}

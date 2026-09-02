@@ -1,0 +1,26 @@
+# Environment files
+.env
+*.env
+
+# Kubernetes secrets
+secret.yml
+secret.yaml
+
+# Python virtual environments
+project_1_venv/
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Pytest
+.pytest_cache/
+
+# Uploads
+uploads/
+
+# IDE
+.vscode/
+.idea/

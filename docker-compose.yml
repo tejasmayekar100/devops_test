@@ -1,0 +1,50 @@
+services:
+  flask:
+    image: tejasmayekar100/flask-app:latest
+    container_name: flask-app
+
+    ports:
+      - "3000:3000"
+      - "5000:5000"
+
+    environment:
+      DATABASE_URL: "mysql+pymysql://root:root@mysql:3306/testdb"
+      FLASK_SECRET_KEY: "my-secret-key"
+      JWT_SECRET_KEY: "my-jwt-secret-key"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:9.6.0
+    container_name: mysql_dbs
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
