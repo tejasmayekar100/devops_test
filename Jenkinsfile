@@ -12,7 +12,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 dir('project_1') {
-                    sh 'pip3 install -r requirements.txt'
+                    sh '''
+                        python3 -m venv venv
+                        . venv/bin/activate
+                        pip install -r requirements.txt
+                    '''
                 }
             }
         }
@@ -20,7 +24,10 @@ pipeline {
         stage('Test') {
             steps {
                 dir('project_1') {
-                    sh 'pytest'
+                    sh '''
+                        . venv/bin/activate
+                        pytest
+                    '''
                 }
             }
         }
