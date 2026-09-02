@@ -32,9 +32,14 @@ pipeline {
 
                         sleep 5
 
-                        echo "===== APP LOG ====="
+                        echo "========== APP LOG =========="
                         cat app.log || true
-                        echo "==================="
+                        echo "============================="
+
+                        if ! kill -0 $APP_PID 2>/dev/null; then
+                            echo "Flask application failed to start"
+                            exit 1
+                        fi
 
                         pytest
 
