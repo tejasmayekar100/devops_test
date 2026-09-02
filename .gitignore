@@ -24,3 +24,6 @@ uploads/
 # IDE
 .vscode/
 .idea/
+project_1/tests/test_login_success.py
+project_1/tests/test_rbac.py
+project_1/tests/test_expense_policy.py
