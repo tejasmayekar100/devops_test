@@ -12,7 +12,7 @@ stages {
     stage('Install Dependencies') {
         steps {
             dir('project_1') {
-                sh 'pip install -r requirements.txt'
+                sh 'python3 -m pip install -r requirements.txt'
             }
         }
     }
@@ -20,7 +20,7 @@ stages {
     stage('Test') {
         steps {
             dir('project_1') {
-                sh 'pytest'
+                sh 'python3 -m pytest'
             }
         }
     }
@@ -50,5 +50,6 @@ stages {
         }
     }
 }
+
 
 }
