@@ -31,7 +31,26 @@ pipeline {
                         export JWT_SECRET_KEY="test-secret"
                         export FLASK_SECRET_KEY="test-secret"
 
+                        python app.py > app.log 2>&1 &
+                        APP_PID=$!
+
+                        sleep 5
+
+                        echo "========== APP LOG =========="
+                        cat app.log || true
+                        echo "============================="
+
+                        if ! kill -0 $APP_PID 2>/dev/null; then
+                            echo "Flask application failed to start"
+                            exit 1
+                        fi
+
                         pytest
+                        TEST_RESULT=$?
+
+                        kill $APP_PID || true
+
+                        exit $TEST_RESULT
                     '''
                 }
             }
