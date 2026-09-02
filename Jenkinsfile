@@ -26,7 +26,19 @@ pipeline {
                 dir('project_1') {
                     sh '''
                         . venv/bin/activate
+
+                        python app.py > app.log 2>&1 &
+                        APP_PID=$!
+
+                        sleep 5
+
                         pytest
+
+                        TEST_RESULT=$?
+
+                        kill $APP_PID || true
+
+                        exit $TEST_RESULT
                     '''
                 }
             }
