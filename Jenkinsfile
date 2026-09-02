@@ -32,6 +32,10 @@ pipeline {
 
                         sleep 5
 
+                        echo "===== APP LOG ====="
+                        cat app.log || true
+                        echo "==================="
+
                         pytest
 
                         TEST_RESULT=$?
