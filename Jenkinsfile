@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     stages {
 
         stage('Checkout') {
@@ -79,6 +83,51 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+
+    post {
+
+        success {
+            emailext(
+                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                    <h2>Jenkins Build Successful</h2>
+
+                    <p>
+                        The CI/CD pipeline completed successfully.
+                    </p>
+
+                    <p>
+                        <b>Job:</b> ${env.JOB_NAME}<br>
+                        <b>Build Number:</b> ${env.BUILD_NUMBER}<br>
+                        <b>Build URL:</b> ${env.BUILD_URL}
+                    </p>
+                """,
+                mimeType: 'text/html',
+                to: "tejas70708080@gmail.com"
+            )
+        }
+
+        failure {
+            emailext(
+                subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                    <h2>Jenkins Build Failed</h2>
+
+                    <p>
+                        The CI/CD pipeline failed.
+                    </p>
+
+                    <p>
+                        <b>Job:</b> ${env.JOB_NAME}<br>
+                        <b>Build Number:</b> ${env.BUILD_NUMBER}<br>
+                        <b>Build URL:</b> ${env.BUILD_URL}
+                    </p>
+                """,
+                mimeType: 'text/html',
+                to: "tejas70708080@gmail.com"
+            )
         }
     }
 }
