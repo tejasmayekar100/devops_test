@@ -14,6 +14,8 @@ from controller.expense_claim_controller import expense_claim_bp
 from controller.approval_controller import approval_bp
 from controller.reimbursement_controller import reimbursement_bp
 
+from prometheus_flask_exporter import PrometheusMetrics
+
 import os
 from dotenv import load_dotenv
 
@@ -22,6 +24,15 @@ def create_app():
     load_dotenv()
 
     app = Flask(__name__)
+
+    metrics = PrometheusMetrics(app)
+
+    metrics.info(
+        'flask_app_info',
+        "Flask Application Information",
+        version="1.0.0"
+    )
+
     init_db(app)
 
     app.config['SECRET_KEY'] = os.environ["FLASK_SECRET_KEY"]
