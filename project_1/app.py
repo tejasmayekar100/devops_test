@@ -66,7 +66,7 @@ def create_app():
                 "error": "invalid_token"
             }), 401
 
-        flash("Session expired or invalid token, please login again", "warning")
+        flash("Session expired or invalid token, please login again.", "warning")
         return redirect("/login")
 
     # Create all database tables
