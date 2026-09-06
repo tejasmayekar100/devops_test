@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Travel Requests{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+    <h3>Travel Requests</h3>
+    <a href="/travel-requests/add" class="btn btn-primary btn-sm">+ New Request</a>
+</div>
+
+{# travel_requests may be a Pagination object (manager/finance/admin) or a plain list (employee) #}
+{% set requests_list = travel_requests.items if travel_requests.items is defined else travel_requests %}
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr><th>ID</th><th>Destination</th><th>Purpose</th><th>Dates</th><th>Est. Amount</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for tr in requests_list %}
+        <tr>
+            <td>{{ tr.id }}</td>
+            <td>{{ tr.destination }}</td>
+            <td>{{ tr.purpose }}</td>
+            <td>{{ tr.start_date }} &rarr; {{ tr.end_date }}</td>
+            <td>{{ tr.estimated_amount }}</td>
+            <td>
+                {% if tr.status == "APPROVED" %}
+                    <span class="badge bg-success">{{ tr.status }}</span>
+                {% elif tr.status == "REJECTED" %}
+                    <span class="badge bg-danger">{{ tr.status }}</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">{{ tr.status }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if current_user and current_user.role == "MANAGER" and tr.status == "PENDING" %}
+                    <form method="POST" action="/travel-requests/{{ tr.id }}/approve" style="display:inline">
+                        <button class="btn btn-sm btn-success" type="submit">Approve</button>
+                    </form>
+                    <form method="POST" action="/travel-requests/{{ tr.id }}/reject" style="display:inline">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Reject</button>
+                    </form>
+                {% endif %}
+                <form method="POST" action="/travel-requests/delete/{{ tr.id }}" style="display:inline"
+                      onsubmit="return confirm('Delete this travel request?');">
+                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="7" class="text-muted">No travel requests found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

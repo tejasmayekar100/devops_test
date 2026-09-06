@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Forbidden{% endblock %}
+{% block content %}
+<div class="alert alert-danger mt-4">
+    <h4>403 - Forbidden</h4>
+    <p>{{ error }}</p>
+    <a href="/home" class="btn btn-secondary btn-sm">Back to Home</a>
+</div>
+{% endblock %}

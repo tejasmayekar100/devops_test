@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Employees{% endblock %}
+{% block content %}
+<h3>Employees</h3>
+<table class="table table-striped">
+    <thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Manager ID</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for employee in employees.items %}
+        <tr>
+            <td>{{ employee.id }}</td>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.department or "-" }}</td>
+            <td>{{ employee.manager_id or "-" }}</td>
+            <td>
+                <form method="POST" action="/employees/delete/{{ employee.id }}" style="display:inline"
+                      onsubmit="return confirm('Delete this employee?');">
+                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr><td colspan="5" class="text-muted">No employees found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+<p class="text-muted">Page {{ employees.page }} of {{ employees.pages }} ({{ employees.total }} total)</p>
+{% endblock %}
