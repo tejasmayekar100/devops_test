@@ -94,7 +94,7 @@ pipeline {
                     <h2>Jenkins Build Successful</h2>
                     <p><b>URL:</b> ${env.BUILD_URL}</p>
                 """,
-                to: "YOUR_EMAIL_ADDRESS"
+                to: "tejas70708080@gmail.com"
             )
         }
 
@@ -105,7 +105,7 @@ pipeline {
                     <h2>Jenkins Build Failed</h2>
                     <p><b>URL:</b> ${env.BUILD_URL}</p>
                 """,
-                to: "YOUR_EMAIL_ADDRESS"
+                to: "tejas70708080@gmail.com"
             )
         }
     }
