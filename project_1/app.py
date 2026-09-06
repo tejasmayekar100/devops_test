@@ -4,6 +4,8 @@ from config.database import init_db, db
 
 from flask_jwt_extended import JWTManager
 
+from prometheus_flask_exporter import PrometheusMetrics
+
 from controller.auth_controller import auth_bp
 from controller.user_controller import user_bp
 from controller.employee_controller import employee_bp
@@ -21,15 +23,32 @@ from dotenv import load_dotenv
 def create_app():
     load_dotenv()
 
+    # Create Flask application
     app = Flask(__name__)
+
+    # Prometheus Metrics
+
+    metrics = PrometheusMetrics(app)
+
+    metrics.info(
+        "flask_app_info",
+        "Flask Application Information",
+        version="1.0.0"
+    )
+
+    # Database setup
+
     init_db(app)
 
-    app.config['SECRET_KEY'] = os.environ["FLASK_SECRET_KEY"]
+    # Flask configuration
+
+    app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
     app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET_KEY"]
+
     app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies"]
     app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
-    # Register all blueprints
+    # Register Blueprints
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
@@ -41,13 +60,13 @@ def create_app():
     app.register_blueprint(approval_bp)
     app.register_blueprint(reimbursement_bp)
 
-    # JWT setup
+    # JWT Setup
 
     jwt = JWTManager(app)
 
     @jwt.unauthorized_loader
     def missing_token_callback(err_string):
-        # No token was sent at all
+
         if request.is_json or request.path.startswith("/api"):
             return jsonify({
                 "message": "Authorization token is missing",
@@ -59,24 +78,28 @@ def create_app():
 
     @jwt.invalid_token_loader
     def invalid_token_callback(err_string):
-        # Token was sent but is invalid/expired
+
         if request.is_json or request.path.startswith("/api"):
             return jsonify({
                 "message": "Authorization token is invalid",
                 "error": "invalid_token"
             }), 401
 
-        flash("Session expired or invalid token, please login again", "warning")
+        flash(
+            "Session expired or invalid token, please login again",
+            "warning"
+        )
         return redirect("/login")
 
-    # Health check endpoint for Kubernetes
+    # Health Check
+
     @app.route("/health")
     def health():
         return jsonify({
             "status": "healthy"
         }), 200
 
-    # Create all database tables
+    # Create Database Tables
 
     with app.app_context():
         db.create_all()
@@ -84,8 +107,11 @@ def create_app():
     return app
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = create_app()
-    app.run(host='0.0.0.0', port=3000, debug=False)
 
-# new line
+    app.run(
+        host="0.0.0.0",
+        port=3000,
+        debug=False
+    )
