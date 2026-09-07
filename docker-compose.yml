@@ -1,6 +1,6 @@
 services:
   flask:
-    build: ./project_1/.
+    build: ./project_1
     container_name: flask-app
 
     ports:
@@ -28,8 +28,35 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-remote-write-receiver"
+
     depends_on:
       - flask
+
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+
+    ports:
+      - "3001:3000"
+
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana
+
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
 
     networks:
       - app-network
@@ -57,8 +84,64 @@ services:
     networks:
       - app-network
 
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+
+    ports:
+      - "3100:3100"
+
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/local-config.yaml
+
+    command:
+      - "-config.file=/etc/loki/local-config.yaml"
+
+    networks:
+      - app-network
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+
+    command:
+      - "-config.file=/etc/promtail/config.yml"
+
+    depends_on:
+      - loki
+
+    networks:
+      - app-network
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+
+    ports:
+      - "3200:3200"
+      - "4317:4317"
+      - "4318:4318"
+
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo.yaml
+
+    command:
+      - "-config.file=/etc/tempo.yaml"
+
+    depends_on:
+      - flask
+
+    networks:
+      - app-network
+
 volumes:
   mysql-data:
+  grafana-data:
 
 networks:
   app-network:
